@@ -17,7 +17,7 @@ Este repositorio contiene la solución a varias pruebas técnicas relacionadas c
 migración para el catálogo de productos:
 php artisan migrate
 
-Configurar la conexión a la base de datos en el archivo .env
+Configurar la conexión a la base de datos en el archivo .env y crear la base datos
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
