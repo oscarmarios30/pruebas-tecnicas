@@ -1,0 +1,86 @@
+-- Crear la base de datos
+CREATE DATABASE tienda;
+
+-- Usar la base de datos
+USE tienda;
+
+-- Crear la tabla de categorías
+CREATE TABLE categorias (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL
+);
+
+-- Crear la tabla de productos
+CREATE TABLE productos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    precio DECIMAL(10, 2) NOT NULL,
+    categoria_id INT,
+    FOREIGN KEY (categoria_id) REFERENCES categorias(id)
+);
+
+-- Insertar categorías
+INSERT INTO categorias (nombre) VALUES 
+('Electrónica'),
+('Hogar'),
+('Juguetes'),
+('Ropa');
+
+-- Insertar productos
+INSERT INTO productos (nombre, precio, categoria_id) VALUES 
+('Televisor', 300.00, 1),
+('Celular', 200.00, 1),
+('Laptop', 800.00, 1),
+('Sofá', 500.00, 2),
+('Mesa', 150.00, 2),
+('Silla', 100.00, 2),
+('Muñeca', 30.00, 3),
+('Carro de juguete', 20.00, 3),
+('Pantalón', 50.00, 4),
+('Camiseta', 30.00, 4);
+
+
+Consultas solicitadas
+
+a) Productos con un precio mayor al promedio de su categoría 
+
+SELECT p.nombre AS producto, 
+       p.precio, 
+       c.nombre AS categoria, 
+       (SELECT AVG(precio) 
+        FROM productos 
+        WHERE categoria_id = p.categoria_id) AS promedio_categoria
+FROM productos p
+JOIN categorias c ON p.categoria_id = c.id
+WHERE p.precio > (SELECT AVG(precio) 
+                  FROM productos 
+                  WHERE categoria_id = p.categoria_id);
+
+
+
+Esta consulta utiliza una subconsulta para calcular el promedio de precios de cada categoría 
+y filtra los productos cuyo precio es mayor a dicho promedio.
+
+
+b) Contar cuántos productos hay por cada categoría sql
+
+SELECT c.nombre AS categoria, 
+       COUNT(p.id) AS total_productos
+FROM categorias c
+LEFT JOIN productos p ON c.id = p.categoria_id
+GROUP BY c.id, c.nombre;
+
+
+Utilizamos LEFT JOIN para incluir las categorías que podrían no tener 
+productos y la función COUNT() para contar los productos asociados a cada categoría.
+
+c) Categorías que no tienen productos
+
+SELECT c.nombre AS categoria
+FROM categorias c
+LEFT JOIN productos p ON c.id = p.categoria_id
+WHERE p.id IS NULL;
+
+Usamos un LEFT JOIN entre las tablas de categorías y productos. 
+Luego, filtramos las categorías donde no hay coincidencias (p.id IS NULL).
+
